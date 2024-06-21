@@ -20,8 +20,34 @@ def get_db_connection():
     conn = mysql.connector.connect(**config)
     return conn
 
+@app.route('/read', methods=['GET'])
+def get_post():
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        read_query = "SELECT id, title, content FROM posts"
+        cursor.execute(read_query)
+        rows = cursor.fetchall()
+        
+        posts = []
+        for row in rows:
+            posts.append({
+                "id": row[0],
+                "title": row[1],
+                "content": row[2]
+            })
+        
+        return jsonify(posts)
 
-@app.route('/api/posts', methods=['POST'])
+    except Error as e:
+        return jsonify({'error': str(e)}), 500
+
+    finally:
+        if conn.is_connected():
+            cursor.close()
+            conn.close()
+
+@app.route('/post', methods=['POST'])
 def add_post():
     data = request.json
     title = data.get('title')
@@ -45,6 +71,8 @@ def add_post():
         if conn.is_connected():
             cursor.close()
             conn.close()
+
+
 
 
 if __name__ == '__main__':
