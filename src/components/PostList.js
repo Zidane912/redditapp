@@ -1,8 +1,12 @@
-// src/components/PostList.js
 import React from "react";
 import Post from "./Post";
 
+
 const PostList = ({ posts }) => {
+
+  // cannot simply do readData() to test, will loop infinitley
+
+
   return (
     <div className="post-list">
       {posts.map((post) => (
