@@ -31,6 +31,8 @@ const App = () => {
     setPosts([...posts, post]);
   };
 
+  // deletePost prop, make the func here
+
   return (
     <div className="App">
       <Header />

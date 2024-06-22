@@ -29,3 +29,9 @@ input, textarea {
 .post h2 {
   margin: 0 0 10px 0;
 }
+
+.i {
+  text-align: right;
+  height: 100%;
+  width: 100%;
+}
