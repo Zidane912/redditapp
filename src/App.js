@@ -22,6 +22,7 @@ const App = () => {
       } catch (error) {
         console.error("Error fetching data:", error);
       }
+      
     };
     readData();
 
@@ -31,13 +32,17 @@ const App = () => {
     setPosts([...posts, post]);
   };
 
+  const deletePost = (id) => {
+    setPosts(posts.filter(post => post.id !== id));
+  }
+
   // deletePost prop, make the func here
 
   return (
     <div className="App">
       <Header />
       <NewPostForm addPost={addPost} />
-      <PostList posts={posts} />
+      <PostList posts={posts} deletePost={deletePost} />
     </div>
   );
 };

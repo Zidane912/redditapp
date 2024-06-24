@@ -1,32 +1,31 @@
 import React from "react";
 import axios from "axios";
+import '@fortawesome/fontawesome-free/css/all.min.css';
 
-const DeleteButton = ({ deletePost }) => {
-    
-    // const onClick = async (e) => {
-    //     e.preventDefault();
-    
-    //     try {
-    //       const response = await axios.post("http://127.0.0.1:5000/delete", {
-    //         id
-    //       });
-    //       if (response.status === 201) {
+const DeleteButton = ({ post, deletePost }) => {
 
-    //       }
-    //     } catch (error) {
-    //       console.error("Error posting data:", error);
-    //     }
-    //   };
+  const removePost = async () => {
+    try {
+      const response = await axios.post("http://127.0.0.1:5000/delete", {
+        id: post.id
+      });
+      if (response.status === 204) {
+        deletePost(post.id);
+      }
+    } catch (error) {
+      console.error("Error deleting post:", error);
+    }
+  };
 
-      return (
-        <div>
-            <button>
-                <i className="fa-solid fa-trash fa-fw delete-button"></i>
-            </button>
-        </div>
-      )
-
-
-}
+  return (
+    <div>
+      <div className="row">
+        <button onClick={removePost}>
+          <i className="fa-solid fa-trash fa-fw"></i>
+        </button>
+      </div>
+    </div>
+  );
+};
 
 export default DeleteButton;
