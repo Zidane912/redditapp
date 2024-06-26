@@ -37,6 +37,10 @@ const App = () => {
     setPosts(posts.filter(post => post.id !== id));
   }
 
+  const editPost = (editedPost) => {
+    setPosts(posts.map(post => post.id === editedPost.id ? editedPost : post));
+  };
+
   
   // deletePost prop, make the func here
 
@@ -44,7 +48,7 @@ const App = () => {
     <div className="App">
       <Header />
       <NewPostForm addPost={addPost} />
-      <PostList posts={posts} deletePost={deletePost} />
+      <PostList posts={posts} deletePost={deletePost} editPost={editPost} />
     </div>
   );
 };
