@@ -19,6 +19,17 @@ input, textarea {
   width: 80%;
 }
 
+.post-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.post-title {
+  margin: 0;
+}
+
 .post {
   border: 1px solid #ccc;
   margin: 10px;
@@ -28,4 +39,8 @@ input, textarea {
 
 .post h2 {
   margin: 0 0 10px 0;
+}
+
+.delete-button {
+  padding-right: 100px;
 }

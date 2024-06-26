@@ -2,15 +2,12 @@ import React from "react";
 import Post from "./Post";
 
 
-const PostList = ({ posts }) => {
-
-  // cannot simply do readData() to test, will loop infinitley
-
+const PostList = ({ posts, deletePost }) => {
 
   return (
     <div className="post-list">
       {posts.map((post) => (
-        <Post key={post.id} post={post} />
+        <Post key={post.id} post={post} deletePost={deletePost} />
       ))}
     </div>
   );
