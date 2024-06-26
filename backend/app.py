@@ -117,6 +117,40 @@ def delete_post():
     return jsonify({"message": "Post deleted successfully"}), 200
 
 
+@app.route('/edit', methods=['POST'])
+def edit_post():
+    data = request.json
+    logging.debug(f"Received data: {data}")
+
+    post_id = data.get('id')
+    post_title = data.get('title')
+    post_content = data.get('content')
+
+
+    if post_id is None:
+        logging.error("No id provided in request")
+        return jsonify({"error": "No id provided"}), 400
+
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        update_query = "UPDATE posts SET title = %s, content = %s WHERE id = %s"
+        cursor.execute(update_query, (post_title, post_content, post_id))  # Ensure the id is passed as a tuple
+        conn.commit()
+
+    except Error as e:
+        logging.error(f"Database error: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+    finally:
+        if conn.is_connected():
+            cursor.close()
+            conn.close()
+            logging.debug("Database connection closed")
+
+    return jsonify({"message": "Post edited successfully"}), 200
+
+
 if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG)
     app.run(debug=True)
