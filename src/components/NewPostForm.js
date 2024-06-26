@@ -15,7 +15,8 @@ const NewPostForm = ({ addPost }) => {
         content,
       });
       if (response.status === 201) {
-        addPost({ title, content });
+        const newPost = response.data; // assuming the response contains the new post with its ID
+        addPost(newPost); // pass the entire new post object including the ID
         setTitle("");
         setContent("");
         console.log("New post successfully added");

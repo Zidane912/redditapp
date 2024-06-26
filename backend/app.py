@@ -63,7 +63,16 @@ def add_post():
         insert_query = "INSERT INTO posts (title, content) VALUES (%s, %s)"
         cursor.execute(insert_query, (title, content))
         conn.commit()
-        return jsonify({'message': 'Post added successfully!'}), 201
+        new_post_id = cursor.lastrowid  # Get the last inserted ID
+
+        # Return the new post data
+        new_post = {
+            'id': new_post_id,
+            'title': title,
+            'content': content
+        }
+
+        return jsonify(new_post), 201
 
     except Error as e:
         return jsonify({'error': str(e)}), 500
@@ -72,6 +81,7 @@ def add_post():
         if conn.is_connected():
             cursor.close()
             conn.close()
+
 
 
 @app.route('/delete', methods=['POST'])

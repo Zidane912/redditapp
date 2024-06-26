@@ -30,12 +30,14 @@ const App = () => {
 
   const addPost = (post) => {
     setPosts([...posts, post]);
+
   };
 
   const deletePost = (id) => {
     setPosts(posts.filter(post => post.id !== id));
   }
 
+  
   // deletePost prop, make the func here
 
   return (

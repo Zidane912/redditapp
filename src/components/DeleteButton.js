@@ -4,12 +4,14 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 
 const DeleteButton = ({ post, deletePost }) => {
 
-  const removePost = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
     try {
       const response = await axios.post("http://127.0.0.1:5000/delete", {
         id: post.id
       });
-      if (response.status === 204) {
+      if (response.status === 200) {
         deletePost(post.id);
       }
     } catch (error) {
@@ -19,11 +21,13 @@ const DeleteButton = ({ post, deletePost }) => {
 
   return (
     <div>
-      <div className="row">
-        <button onClick={removePost}>
-          <i className="fa-solid fa-trash fa-fw"></i>
-        </button>
-      </div>
+      <form onSubmit={handleSubmit}>
+        <div className="row">
+          <button type="submit">
+            <i className="fa-solid fa-trash fa-fw"></i>
+          </button>
+        </div>
+      </form>
     </div>
   );
 };
