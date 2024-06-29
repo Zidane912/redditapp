@@ -1,9 +1,9 @@
+// src/components/PostList.js
 import React from "react";
 import Post from "./Post";
-
+import '../App.css';
 
 const PostList = ({ posts, deletePost, editPost }) => {
-
   return (
     <div className="post-list">
       {posts.map((post) => (

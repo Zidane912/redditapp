@@ -1,3 +1,4 @@
+// src/components/DeleteButton.js
 import React from "react";
 import axios from "axios";
 import '@fortawesome/fontawesome-free/css/all.min.css';
@@ -17,7 +18,7 @@ const DeleteButton = ({ post, deletePost }) => {
   };
 
   return (
-    <button onClick={handleDelete}>
+    <button className="delete-button" onClick={handleDelete}>
       <i className="fa-solid fa-trash fa-fw"></i>
     </button>
   );
