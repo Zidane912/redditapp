@@ -29,60 +29,43 @@ const Post = ({ post, deletePost, editPost }) => {
   };
 
   return (
-    <div className="col post">
-      <div className="row post-header">
+    <div className="post">
+      <div className="post-header">
         {isEditing ? (
-          <div className="col edit-form">
-            <div className="col">
-              <div className="row">
-                <input
-                  type="text"
-                  value={editedTitle}
-                  onChange={(e) => setEditedTitle(e.target.value)}
-                />
-              </div>
-              <div className="row">
-                <textarea
-                  value={editedContent}
-                  onChange={(e) => setEditedContent(e.target.value)}
-                />
-              </div>
+          <div className="edit-form">
+            <input
+              type="text"
+              value={editedTitle}
+              onChange={(e) => setEditedTitle(e.target.value)}
+            />
+            <textarea
+              value={editedContent}
+              onChange={(e) => setEditedContent(e.target.value)}
+            />
+            <div>
+              <button onClick={handleSaveClick}>Save</button>
+              <button onClick={() => setIsEditing(false)}>Cancel</button>
             </div>
-
-
-            <div className="row justify-content-end">
-              <div className="col-1">
-                <button onClick={handleSaveClick}>Save</button>
-              </div>
-              <div className="col-1">
-                <button onClick={() => setIsEditing(false)}>Cancel</button>
-              </div>
-            </div>
-
-
           </div>
         ) : (
           <>
-            <div className="col">
+            <div>
               <h2 className="post-title">{post.title}</h2>
             </div>
-            <div className="col-1">
+            <div className="actions">
               <EditButton onClick={() => setIsEditing(true)} />
-            </div>
-            <div className="col-1">
               <DeleteButton post={post} deletePost={deletePost} />
             </div>
           </>
         )}
       </div>
       {!isEditing && (
-        <div className="row">
+        <div className="post-content">
           <p>{post.content}</p>
         </div>
       )}
     </div>
   );
 };
-
 
 export default Post;

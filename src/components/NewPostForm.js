@@ -1,6 +1,7 @@
-// src/components/NewPostForm.jsx
+// src/components/NewPostForm.js
 import React, { useState } from "react";
 import axios from "axios";
+import '../App.css';
 
 const NewPostForm = ({ addPost }) => {
   const [title, setTitle] = useState("");
@@ -8,15 +9,14 @@ const NewPostForm = ({ addPost }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
       const response = await axios.post("http://127.0.0.1:5000/post", {
         title,
         content,
       });
       if (response.status === 201) {
-        const newPost = response.data; // assuming the response contains the new post with its ID
-        addPost(newPost); // pass the entire new post object including the ID
+        const newPost = response.data;
+        addPost(newPost);
         setTitle("");
         setContent("");
         console.log("New post successfully added");
@@ -27,7 +27,7 @@ const NewPostForm = ({ addPost }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form className="new-post-form" onSubmit={handleSubmit}>
       <input
         type="text"
         value={title}
