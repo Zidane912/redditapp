@@ -8,6 +8,7 @@ import "./App.css";
 
 const App = () => {
   const [posts, setPosts] = useState([]);
+  const [replies, setReplies] = useState([]);
 
   useEffect(() => {
     const readData = async () => {
@@ -33,13 +34,25 @@ const App = () => {
 
   };
 
+  // const setReply = (reply) => {
+  //   setReplies([...replies, reply]);
+  // };
+
   const deletePost = (id) => {
     setPosts(posts.filter(post => post.id !== id));
-  }
+  };
+
+  // const deleteReply = (reply) => {
+  //   setReplies(replies.filter(reply => reply.id !== id));
+  // };
 
   const editPost = (editedPost) => {
     setPosts(posts.map(post => post.id === editedPost.id ? editedPost : post));
   };
+
+  // const editReply = (editedReply) => {
+  //   setReplies(replies.map(reply => reply.id === editedReply.id ? editedReply : reply));
+  // };
 
   
   // deletePost prop, make the func here
@@ -48,7 +61,7 @@ const App = () => {
     <div className="App">
       <Header />
       <NewPostForm addPost={addPost} />
-      <PostList posts={posts} deletePost={deletePost} editPost={editPost} />
+      <PostList posts={posts} replies={replies} deletePost={deletePost} editPost={editPost} />
     </div>
   );
 };

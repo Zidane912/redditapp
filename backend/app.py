@@ -126,7 +126,6 @@ def edit_post():
     post_title = data.get('title')
     post_content = data.get('content')
 
-
     if post_id is None:
         logging.error("No id provided in request")
         return jsonify({"error": "No id provided"}), 400
@@ -138,6 +137,15 @@ def edit_post():
         cursor.execute(update_query, (post_title, post_content, post_id))  # Ensure the id is passed as a tuple
         conn.commit()
 
+        # Prepare the new post data to be returned
+        new_post = {
+            'id': post_id,
+            'title': post_title,
+            'content': post_content
+        }
+
+        return jsonify(new_post), 201  # Return the new post data with status code 201
+
     except Error as e:
         logging.error(f"Database error: {str(e)}")
         return jsonify({'error': str(e)}), 500
@@ -148,7 +156,6 @@ def edit_post():
             conn.close()
             logging.debug("Database connection closed")
 
-    return jsonify({"message": "Post edited successfully"}), 200
 
 
 if __name__ == '__main__':
