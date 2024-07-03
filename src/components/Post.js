@@ -19,7 +19,7 @@ const Post = ({ post, deletePost, editPost }) => {
         title: editedTitle,
         content: editedContent
       });
-      if (response.status === 200) {
+      if (response.status === 201) {
         editPost(response.data);
         setIsEditing(false);
       }

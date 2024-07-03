@@ -3,7 +3,7 @@ import React from "react";
 import Post from "./Post";
 import '../App.css';
 
-const PostList = ({ posts, deletePost, editPost }) => {
+const PostList = ({ posts, replies, deletePost, editPost }) => {
   return (
     <div className="post-list">
       {posts.map((post) => (

@@ -19,7 +19,8 @@ const NewPostForm = ({ addPost }) => {
         addPost(newPost);
         setTitle("");
         setContent("");
-        console.log("New post successfully added");
+        // console.log(newPost);
+        // console.log("New post successfully added");
       }
     } catch (error) {
       console.error("Error posting data:", error);
