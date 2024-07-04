@@ -157,6 +157,75 @@ def edit_post():
             logging.debug("Database connection closed")
 
 
+# reply queries
+
+@app.route('/reply/read', methods=['GET'])
+def get_reply():
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        read_query = "SELECT id, content FROM reply"
+        cursor.execute(read_query)
+        rows = cursor.fetchall()
+        
+        replies = []
+        for row in rows:
+            replies.append({
+                "id": row[0],
+                "content": row[1]
+            })
+        
+        return jsonify(replies)
+
+    except Error as e:
+        return jsonify({'error': str(e)}), 500
+
+    finally:
+        if conn.is_connected():
+            cursor.close()
+            conn.close()
+
+
+
+@app.route('/reply', methods=['POST'])
+def create_reply():
+    data = request.json
+    logging.debug(f"Received data: {data}")
+
+    post_id = data.get('postId')
+    reply_content = data.get('content')
+
+    if post_id is None:
+        logging.error("No id provided in request")
+        return jsonify({"error": "No id provided"}), 400
+
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        update_query = "INSERT INTO reply (post_id, content) VALUES (%s, %s)"
+        cursor.execute(update_query, (post_id, reply_content))  # Ensure the id is passed as a tuple
+        conn.commit()
+        new_reply_id = cursor.lastrowid  # Get the last inserted ID
+
+        # Prepare the new post data to be returned
+        new_reply = {
+            'id': new_reply_id,
+            'content': reply_content
+        }
+
+        return jsonify(new_reply), 201  # Return the new post data with status code 201
+
+    except Error as e:
+        logging.error(f"Database error: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+    finally:
+        if conn.is_connected():
+            cursor.close()
+            conn.close()
+            logging.debug("Database connection closed")
+
+
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG)

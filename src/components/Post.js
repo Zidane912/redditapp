@@ -1,18 +1,19 @@
-// src/components/Post.js
 import React, { useState } from "react";
 import axios from "axios";
 import DeleteButton from "./DeleteButton";
 import EditButton from "./EditButton";
+import ReplyButton from "./ReplyButton";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../App.css';
 
-const Post = ({ post, deletePost, editPost }) => {
-
+const Post = ({ post, replies, addReply, deletePost, editPost }) => {
   const [isEditing, setIsEditing] = useState(false);
+  const [isReplying, setIsReplying] = useState(false);
   const [editedTitle, setEditedTitle] = useState(post.title);
   const [editedContent, setEditedContent] = useState(post.content);
+  const [replyContent, setReplyContent] = useState('');
 
-  const handleSaveClick = async () => {
+  const handlePostClick = async () => {
     try {
       const response = await axios.post("http://127.0.0.1:5000/edit", {
         id: post.id,
@@ -25,6 +26,22 @@ const Post = ({ post, deletePost, editPost }) => {
       }
     } catch (error) {
       console.error("Error updating post:", error);
+    }
+  };
+
+  const handleReplyClick = async () => {
+    try {
+      const response = await axios.post("http://127.0.0.1:5000/reply", {
+        postId: post.id,
+        content: replyContent
+      });
+      if (response.status === 201) {
+        addReply(response.data);
+        setReplyContent('');
+        setIsReplying(false);
+      }
+    } catch (error) {
+      console.error("Error saving reply:", error);
     }
   };
 
@@ -43,7 +60,7 @@ const Post = ({ post, deletePost, editPost }) => {
               onChange={(e) => setEditedContent(e.target.value)}
             />
             <div>
-              <button onClick={handleSaveClick}>Save</button>
+              <button onClick={handlePostClick}>Save</button>
               <button onClick={() => setIsEditing(false)}>Cancel</button>
             </div>
           </div>
@@ -62,6 +79,28 @@ const Post = ({ post, deletePost, editPost }) => {
       {!isEditing && (
         <div className="post-content">
           <p>{post.content}</p>
+        </div>
+      )}
+      <div className="row">
+        <ReplyButton onClick={() => setIsReplying(!isReplying)} />
+      </div>
+      {isReplying && (
+        <div className="edit-form">
+          <textarea
+            value={replyContent}
+            onChange={(e) => setReplyContent(e.target.value)}
+          />
+          <button onClick={handleReplyClick}>Save</button>
+          <button onClick={() => setIsReplying(false)}>Cancel</button>
+        </div>
+      )}
+      {replies && replies.length > 0 && (
+        <div className="replies">
+          {replies.map((reply) => (
+            <div key={reply.id} className="reply">
+              <p>{reply.content}</p>
+            </div>
+          ))}
         </div>
       )}
     </div>
