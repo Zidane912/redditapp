@@ -8,7 +8,7 @@ const PostList = ({ posts, replies, deletePost, editPost, addReply }) => {
         <Post
           key={post.id}
           post={post}
-          replies={replies.filter(reply => reply.postId === post.id)}
+          replies={replies.filter(reply => reply.post_id === post.id)}
           deletePost={deletePost}
           editPost={editPost}
           addReply={addReply}

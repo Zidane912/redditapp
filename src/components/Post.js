@@ -32,7 +32,7 @@ const Post = ({ post, replies, addReply, deletePost, editPost }) => {
   const handleReplyClick = async () => {
     try {
       const response = await axios.post("http://127.0.0.1:5000/reply", {
-        postId: post.id,
+        post_id: post.id,
         content: replyContent
       });
       if (response.status === 201) {

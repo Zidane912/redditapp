@@ -26,7 +26,6 @@ const App = () => {
       try {
         const response = await axios.get("http://127.0.0.1:5000/reply/read");
         if (response.status === 200) {
-          console.log(replies);
           setReplies(response.data);
         }
       } catch (error) {
@@ -34,8 +33,6 @@ const App = () => {
       }
     };
 
-
-    readPostData();
     readReplyData();
 
   }, []);

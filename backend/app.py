@@ -164,7 +164,7 @@ def get_reply():
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
-        read_query = "SELECT id, content FROM reply"
+        read_query = "SELECT id, content, post_id FROM reply"
         cursor.execute(read_query)
         rows = cursor.fetchall()
         
@@ -172,7 +172,8 @@ def get_reply():
         for row in rows:
             replies.append({
                 "id": row[0],
-                "content": row[1]
+                "content": row[1],
+                "post_id": row[2]
             })
         
         return jsonify(replies)
@@ -192,7 +193,7 @@ def create_reply():
     data = request.json
     logging.debug(f"Received data: {data}")
 
-    post_id = data.get('postId')
+    post_id = data.get('post_id')
     reply_content = data.get('content')
 
     if post_id is None:
@@ -210,7 +211,8 @@ def create_reply():
         # Prepare the new post data to be returned
         new_reply = {
             'id': new_reply_id,
-            'content': reply_content
+            'content': reply_content,
+            'post_id': post_id
         }
 
         return jsonify(new_reply), 201  # Return the new post data with status code 201
