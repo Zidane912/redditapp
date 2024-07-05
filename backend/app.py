@@ -21,7 +21,7 @@ def get_db_connection():
     conn = mysql.connector.connect(**config)
     return conn
 
-@app.route('/read', methods=['GET'])
+@app.route('/readPosts', methods=['GET'])
 def get_post():
     try:
         conn = get_db_connection()
@@ -48,7 +48,7 @@ def get_post():
             cursor.close()
             conn.close()
 
-@app.route('/post', methods=['POST'])
+@app.route('/addPost', methods=['POST'])
 def add_post():
     data = request.json
     title = data.get('title')
@@ -84,7 +84,7 @@ def add_post():
 
 
 
-@app.route('/delete', methods=['POST'])
+@app.route('/deletePost', methods=['POST'])
 def delete_post():
     data = request.json
     logging.debug(f"Received data: {data}")
@@ -117,7 +117,7 @@ def delete_post():
     return jsonify({"message": "Post deleted successfully"}), 200
 
 
-@app.route('/edit', methods=['POST'])
+@app.route('/editPost', methods=['POST'])
 def edit_post():
     data = request.json
     logging.debug(f"Received data: {data}")
@@ -159,8 +159,8 @@ def edit_post():
 
 # reply queries
 
-@app.route('/reply/read', methods=['GET'])
-def get_reply():
+@app.route('/readReplies', methods=['GET'])
+def get_replies():
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
@@ -188,8 +188,8 @@ def get_reply():
 
 
 
-@app.route('/reply', methods=['POST'])
-def create_reply():
+@app.route('/addReply', methods=['POST'])
+def add_reply():
     data = request.json
     logging.debug(f"Received data: {data}")
 
@@ -228,6 +228,77 @@ def create_reply():
             logging.debug("Database connection closed")
 
 
+@app.route('/deleteReply', methods=['POST'])
+def delete_reply():
+    data = request.json
+    logging.debug(f"Received data: {data}")
+
+    reply_id = data.get('id')
+    logging.debug(f"Post ID: {reply_id}")
+
+    if reply_id is None:
+        logging.error("No id provided in request")
+        return jsonify({"error": "No id provided"}), 400
+
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        delete_query = "DELETE FROM reply WHERE id = %s"
+        cursor.execute(delete_query, (reply_id,))  # Ensure the id is passed as a tuple
+        conn.commit()
+        logging.debug(f"Deleted post with ID: {reply_id}")
+
+    except Error as e:
+        logging.error(f"Database error: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+    finally:
+        if conn.is_connected():
+            cursor.close()
+            conn.close()
+            logging.debug("Database connection closed")
+
+    return jsonify({"message": "Post deleted successfully"}), 200
+
+@app.route('/editReply', methods=['POST'])
+def edit_reply():
+    data = request.json
+    logging.debug(f"Received data: {data}")
+
+
+    reply_id = data.get('reply_id')
+    content = data.get('content')
+    post_id = data.get('post_id')
+
+    if reply_id is None:
+        logging.error("No id provided in request")
+        return jsonify({"error": "No id provided"}), 400
+
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        update_query = "UPDATE reply SET content = %s WHERE id = %s"
+        cursor.execute(update_query, (content, reply_id))  # Ensure the id is passed as a tuple
+        conn.commit()
+
+        # Prepare the new post data to be returned
+        edited_reply = {
+            'id': reply_id,
+            'content': content,
+            'post_id': post_id
+        }
+
+        return jsonify(edited_reply), 201  # Return the new post data with status code 201
+
+    except Error as e:
+        logging.error(f"Database error: {str(e)}")
+        return jsonify({'error': str(e)}), 500
+
+    finally:
+        if conn.is_connected():
+            cursor.close()
+            conn.close()
+            logging.debug("Database connection closed")
 
 if __name__ == '__main__':
     logging.basicConfig(level=logging.DEBUG)

@@ -27,11 +27,11 @@ header {
   border-radius: 4px;
 }
 
-.post-header {
+/* .post-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-}
+} */
 
 .post-title {
   font-size: 1.5em;
@@ -73,12 +73,12 @@ header {
   color: #555;
 }
 
-.reply-button {
+/* .reply-button {
   display: flex;
   justify-content: right;
   margin-left: -10px;
   margin-bottom: 5px;
-}
+} */
 
 .new-post-form {
   max-width: 800px;

@@ -3,18 +3,19 @@ import React from "react";
 import axios from "axios";
 import '@fortawesome/fontawesome-free/css/all.min.css';
 
-const DeleteButton = ({ post, deletePost }) => {
+const DeleteButton = ({ item, deleteItem, itemType }) => {
   
   const handleDelete = async () => {
+    const endpoint = itemType === 'post' ? 'deletePost' : 'deleteReply';
     try {
-      const response = await axios.post("http://127.0.0.1:5000/delete", {
-        id: post.id
+      const response = await axios.post(`http://127.0.0.1:5000/${endpoint}`, {
+        id: item.id
       });
       if (response.status === 200) {
-        deletePost(post.id);
+        deleteItem(item.id);
       }
     } catch (error) {
-      console.error("Error deleting post:", error);
+      console.error(`Error deleting ${itemType}:`, error);
     }
   };
 

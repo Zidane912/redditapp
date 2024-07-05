@@ -6,16 +6,18 @@ import ReplyButton from "./ReplyButton";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../App.css';
 
-const Post = ({ post, replies, addReply, deletePost, editPost }) => {
+const Post = ({ post, replies, addReply, deletePost, editPost, deleteReply, editReply }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [isReplying, setIsReplying] = useState(false);
+  const [replyBeingEdited, setReplyBeingEdited] = useState(null);
   const [editedTitle, setEditedTitle] = useState(post.title);
   const [editedContent, setEditedContent] = useState(post.content);
   const [replyContent, setReplyContent] = useState('');
+  const [editedReplyContent, setEditedReplyContent] = useState('');
 
   const handlePostClick = async () => {
     try {
-      const response = await axios.post("http://127.0.0.1:5000/edit", {
+      const response = await axios.post("http://127.0.0.1:5000/editPost", {
         id: post.id,
         title: editedTitle,
         content: editedContent
@@ -31,7 +33,7 @@ const Post = ({ post, replies, addReply, deletePost, editPost }) => {
 
   const handleReplyClick = async () => {
     try {
-      const response = await axios.post("http://127.0.0.1:5000/reply", {
+      const response = await axios.post("http://127.0.0.1:5000/addReply", {
         post_id: post.id,
         content: replyContent
       });
@@ -42,6 +44,22 @@ const Post = ({ post, replies, addReply, deletePost, editPost }) => {
       }
     } catch (error) {
       console.error("Error saving reply:", error);
+    }
+  };
+
+  const handleEditReplyClick = async () => {
+    try {
+      const response = await axios.post("http://127.0.0.1:5000/editReply", {
+        post_id: replyBeingEdited.post_id,
+        reply_id: replyBeingEdited.id,
+        content: editedReplyContent
+      });
+      if (response.status === 201) {
+        editReply(response.data);
+        setReplyBeingEdited(null);
+      }
+    } catch (error) {
+      console.error("Error saving edited reply:", error);
     }
   };
 
@@ -65,15 +83,16 @@ const Post = ({ post, replies, addReply, deletePost, editPost }) => {
             </div>
           </div>
         ) : (
-          <>
-            <div>
+          <div className="row d-flex justify-content-between align-items-center">
+            <div className="col">
               <h2 className="post-title">{post.title}</h2>
             </div>
-            <div className="actions">
+            <div className="col d-flex justify-content-end">
+              <ReplyButton onClick={() => setIsReplying(!isReplying)} />
               <EditButton onClick={() => setIsEditing(true)} />
-              <DeleteButton post={post} deletePost={deletePost} />
+              <DeleteButton item={post} deleteItem={deletePost} itemType="post" />
             </div>
-          </>
+          </div>
         )}
       </div>
       {!isEditing && (
@@ -81,9 +100,6 @@ const Post = ({ post, replies, addReply, deletePost, editPost }) => {
           <p>{post.content}</p>
         </div>
       )}
-      <div className="row">
-        <ReplyButton onClick={() => setIsReplying(!isReplying)} />
-      </div>
       {isReplying && (
         <div className="edit-form">
           <textarea
@@ -97,8 +113,27 @@ const Post = ({ post, replies, addReply, deletePost, editPost }) => {
       {replies && replies.length > 0 && (
         <div className="replies">
           {replies.map((reply) => (
-            <div key={reply.id} className="reply">
-              <p>{reply.content}</p>
+            <div key={reply.id} className="row reply">
+              {replyBeingEdited && replyBeingEdited.id === reply.id ? (
+                <div className="col edit-form">
+                  <textarea
+                    value={editedReplyContent}
+                    onChange={(e) => setEditedReplyContent(e.target.value)}
+                  />
+                  <button onClick={handleEditReplyClick}>Save</button>
+                  <button onClick={() => setReplyBeingEdited(null)}>Cancel</button>
+                </div>
+              ) : (
+                <>
+                  <div className="col">
+                    <p>{reply.content}</p>
+                  </div>
+                  <div className="col d-flex justify-content-end">
+                    <EditButton onClick={() => { setReplyBeingEdited(reply); setEditedReplyContent(reply.content); }} />
+                    <DeleteButton item={reply} deleteItem={deleteReply} itemType="reply" />
+                  </div>
+                </>
+              )}
             </div>
           ))}
         </div>

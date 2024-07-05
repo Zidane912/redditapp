@@ -10,30 +10,19 @@ const App = () => {
   const [replies, setReplies] = useState([]);
 
   useEffect(() => {
-    const readPostData = async () => {
+    const readData = async (endpoint, stateFunction) => {
       try {
-        const response = await axios.get("http://127.0.0.1:5000/read");
+        const response = await axios.get(`http://127.0.0.1:5000/${endpoint}`);
         if (response.status === 200) {
-          setPosts(response.data);
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-    readPostData();
-
-    const readReplyData = async () => {
-      try {
-        const response = await axios.get("http://127.0.0.1:5000/reply/read");
-        if (response.status === 200) {
-          setReplies(response.data);
+          stateFunction(response.data);
         }
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
 
-    readReplyData();
+    readData("readPosts", setPosts);
+    readData("readReplies", setReplies);
 
   }, []);
 
@@ -49,15 +38,23 @@ const App = () => {
     setPosts(posts.filter(post => post.id !== id));
   };
 
+  const deleteReply = (id) => {
+    setReplies(replies.filter(reply => reply.id !== id));
+  };
+
   const editPost = (editedPost) => {
     setPosts(posts.map(post => post.id === editedPost.id ? editedPost : post));
+  };
+
+  const editReply = (editedReply) => {
+    setReplies(replies.map(reply => reply.id === editedReply.id ? editedReply : reply));
   };
 
   return (
     <div className="App">
       <Header />
       <NewPostForm addPost={addPost} />
-      <PostList posts={posts} replies={replies} deletePost={deletePost} editPost={editPost} addReply={addReply} />
+      <PostList posts={posts} replies={replies} deletePost={deletePost} editPost={editPost} addReply={addReply} deleteReply={deleteReply} editReply={editReply} />
     </div>
   );
 };

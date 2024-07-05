@@ -1,7 +1,7 @@
 import React from "react";
 import Post from "./Post";
 
-const PostList = ({ posts, replies, deletePost, editPost, addReply }) => {
+const PostList = ({ posts, replies, deletePost, editPost, addReply, deleteReply, editReply }) => {
   return (
     <div className="post-list">
       {posts.map(post => (
@@ -12,6 +12,8 @@ const PostList = ({ posts, replies, deletePost, editPost, addReply }) => {
           deletePost={deletePost}
           editPost={editPost}
           addReply={addReply}
+          deleteReply={deleteReply}
+          editReply={editReply}
         />
       ))}
     </div>
