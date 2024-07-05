@@ -27,11 +27,11 @@ header {
   border-radius: 4px;
 }
 
-.post-header {
+/* .post-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-}
+} */
 
 .post-title {
   font-size: 1.5em;
@@ -62,16 +62,23 @@ header {
   background-color: #e03e00;
 }
 
-.delete-button, .edit-button {
+.delete-button, .edit-button, .reply-button {
   background: none;
   border: none;
   cursor: pointer;
   color: #888;
 }
 
-.delete-button:hover, .edit-button:hover {
+.delete-button:hover, .edit-button:hover, .reply-button:hover {
   color: #555;
 }
+
+/* .reply-button {
+  display: flex;
+  justify-content: right;
+  margin-left: -10px;
+  margin-bottom: 5px;
+} */
 
 .new-post-form {
   max-width: 800px;

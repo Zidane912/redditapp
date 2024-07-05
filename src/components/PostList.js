@@ -1,13 +1,20 @@
-// src/components/PostList.js
 import React from "react";
 import Post from "./Post";
-import '../App.css';
 
-const PostList = ({ posts, replies, deletePost, editPost }) => {
+const PostList = ({ posts, replies, deletePost, editPost, addReply, deleteReply, editReply }) => {
   return (
     <div className="post-list">
-      {posts.map((post) => (
-        <Post key={post.id} post={post} deletePost={deletePost} editPost={editPost} />
+      {posts.map(post => (
+        <Post
+          key={post.id}
+          post={post}
+          replies={replies.filter(reply => reply.post_id === post.id)}
+          deletePost={deletePost}
+          editPost={editPost}
+          addReply={addReply}
+          deleteReply={deleteReply}
+          editReply={editReply}
+        />
       ))}
     </div>
   );

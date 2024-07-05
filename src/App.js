@@ -1,4 +1,3 @@
-// src/App.js
 import React, { useState, useEffect } from "react";
 import Header from "./components/Header";
 import PostList from "./components/PostList";
@@ -11,57 +10,51 @@ const App = () => {
   const [replies, setReplies] = useState([]);
 
   useEffect(() => {
-    const readData = async () => {
+    const readData = async (endpoint, stateFunction) => {
       try {
-        const response = await axios.get("http://127.0.0.1:5000/read");
+        const response = await axios.get(`http://127.0.0.1:5000/${endpoint}`);
         if (response.status === 200) {
-          // response.data.forEach(function(post) {
-          //   posts.append
-          // })
-          setPosts(response.data);
+          stateFunction(response.data);
         }
       } catch (error) {
         console.error("Error fetching data:", error);
       }
-      
     };
-    readData();
 
-  }, []); // this means that it only runs once when mounted
+    readData("readPosts", setPosts);
+    readData("readReplies", setReplies);
+
+  }, []);
 
   const addPost = (post) => {
     setPosts([...posts, post]);
-
   };
 
-  // const setReply = (reply) => {
-  //   setReplies([...replies, reply]);
-  // };
+  const addReply = (reply) => {
+    setReplies([...replies, reply]);
+  };
 
   const deletePost = (id) => {
     setPosts(posts.filter(post => post.id !== id));
   };
 
-  // const deleteReply = (reply) => {
-  //   setReplies(replies.filter(reply => reply.id !== id));
-  // };
+  const deleteReply = (id) => {
+    setReplies(replies.filter(reply => reply.id !== id));
+  };
 
   const editPost = (editedPost) => {
     setPosts(posts.map(post => post.id === editedPost.id ? editedPost : post));
   };
 
-  // const editReply = (editedReply) => {
-  //   setReplies(replies.map(reply => reply.id === editedReply.id ? editedReply : reply));
-  // };
-
-  
-  // deletePost prop, make the func here
+  const editReply = (editedReply) => {
+    setReplies(replies.map(reply => reply.id === editedReply.id ? editedReply : reply));
+  };
 
   return (
     <div className="App">
       <Header />
       <NewPostForm addPost={addPost} />
-      <PostList posts={posts} replies={replies} deletePost={deletePost} editPost={editPost} />
+      <PostList posts={posts} replies={replies} deletePost={deletePost} editPost={editPost} addReply={addReply} deleteReply={deleteReply} editReply={editReply} />
     </div>
   );
 };

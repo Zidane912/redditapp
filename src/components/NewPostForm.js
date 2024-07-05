@@ -10,7 +10,7 @@ const NewPostForm = ({ addPost }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://127.0.0.1:5000/post", {
+      const response = await axios.post("http://127.0.0.1:5000/addPost", {
         title,
         content,
       });
