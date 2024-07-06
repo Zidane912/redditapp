@@ -42,7 +42,9 @@ const NewPostForm = ({ addPost }) => {
         placeholder="Content"
         required
       />
-      <button type="submit">Add Post</button>
+      <div className="d-flex justify-content-end">
+        <button type="submit">Add Post</button>
+      </div>
     </form>
   );
 };

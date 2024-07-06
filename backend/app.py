@@ -99,8 +99,22 @@ def delete_post():
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
-        delete_query = "DELETE FROM posts WHERE id = %s"
-        cursor.execute(delete_query, (post_id,))  # Ensure the id is passed as a tuple
+
+        # Check the count of replies associated with the post
+        check_replies_query = "SELECT COUNT(*) FROM reply WHERE post_id = %s"
+        cursor.execute(check_replies_query, (post_id,))
+        reply_count = cursor.fetchone()[0]
+        logging.debug(f"Number of replies for post ID {post_id}: {reply_count}")
+
+        # If there are replies, delete them first
+        if reply_count > 0:
+            delete_replies_query = "DELETE FROM reply WHERE post_id = %s"
+            cursor.execute(delete_replies_query, (post_id,))
+            logging.debug(f"Deleted {reply_count} replies for post ID {post_id}")
+
+        # Delete the post
+        delete_post_query = "DELETE FROM posts WHERE id = %s"
+        cursor.execute(delete_post_query, (post_id,))
         conn.commit()
         logging.debug(f"Deleted post with ID: {post_id}")
 
@@ -115,6 +129,7 @@ def delete_post():
             logging.debug("Database connection closed")
 
     return jsonify({"message": "Post deleted successfully"}), 200
+
 
 
 @app.route('/editPost', methods=['POST'])

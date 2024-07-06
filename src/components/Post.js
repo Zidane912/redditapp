@@ -77,7 +77,7 @@ const Post = ({ post, replies, addReply, deletePost, editPost, deleteReply, edit
               value={editedContent}
               onChange={(e) => setEditedContent(e.target.value)}
             />
-            <div>
+            <div className="d-flex justify-content-end">
               <button onClick={handlePostClick}>Save</button>
               <button onClick={() => setIsEditing(false)}>Cancel</button>
             </div>
@@ -106,8 +106,10 @@ const Post = ({ post, replies, addReply, deletePost, editPost, deleteReply, edit
             value={replyContent}
             onChange={(e) => setReplyContent(e.target.value)}
           />
-          <button onClick={handleReplyClick}>Save</button>
-          <button onClick={() => setIsReplying(false)}>Cancel</button>
+          <div className="d-flex justify-content-end">
+            <button onClick={handleReplyClick}>Save</button>
+            <button onClick={() => setIsReplying(false)}>Cancel</button>
+          </div>
         </div>
       )}
       {replies && replies.length > 0 && (
@@ -120,8 +122,10 @@ const Post = ({ post, replies, addReply, deletePost, editPost, deleteReply, edit
                     value={editedReplyContent}
                     onChange={(e) => setEditedReplyContent(e.target.value)}
                   />
-                  <button onClick={handleEditReplyClick}>Save</button>
-                  <button onClick={() => setReplyBeingEdited(null)}>Cancel</button>
+                  <div className="d-flex justify-content-end">
+                    <button onClick={handleEditReplyClick}>Save</button>
+                    <button onClick={() => setReplyBeingEdited(null)}>Cancel</button>
+                  </div>
                 </div>
               ) : (
                 <>
