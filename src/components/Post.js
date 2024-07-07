@@ -77,7 +77,7 @@ const Post = ({ post, replies, addReply, deletePost, editPost, deleteReply, edit
               value={editedContent}
               onChange={(e) => setEditedContent(e.target.value)}
             />
-            <div className="d-flex justify-content-end">
+            <div className="save-cancel-buttons d-flex justify-content-end">
               <button onClick={handlePostClick}>Save</button>
               <button onClick={() => setIsEditing(false)}>Cancel</button>
             </div>
@@ -106,7 +106,7 @@ const Post = ({ post, replies, addReply, deletePost, editPost, deleteReply, edit
             value={replyContent}
             onChange={(e) => setReplyContent(e.target.value)}
           />
-          <div className="d-flex justify-content-end">
+          <div className="save-cancel-buttons d-flex justify-content-end">
             <button onClick={handleReplyClick}>Save</button>
             <button onClick={() => setIsReplying(false)}>Cancel</button>
           </div>
@@ -122,19 +122,29 @@ const Post = ({ post, replies, addReply, deletePost, editPost, deleteReply, edit
                     value={editedReplyContent}
                     onChange={(e) => setEditedReplyContent(e.target.value)}
                   />
-                  <div className="d-flex justify-content-end">
-                    <button onClick={handleEditReplyClick}>Save</button>
-                    <button onClick={() => setReplyBeingEdited(null)}>Cancel</button>
+                  <div className="save-cancel-buttons d-flex justify-content-end">
+                    <button className="save-button" onClick={handleEditReplyClick}>Save</button>
+                    <button className="cancel-button" onClick={() => setReplyBeingEdited(null)}>Cancel</button>
                   </div>
                 </div>
               ) : (
                 <>
-                  <div className="col">
-                    <p>{reply.content}</p>
-                  </div>
-                  <div className="col d-flex justify-content-end">
-                    <EditButton onClick={() => { setReplyBeingEdited(reply); setEditedReplyContent(reply.content); }} />
-                    <DeleteButton item={reply} deleteItem={deleteReply} itemType="reply" />
+                  <div className="reply-wrapper">
+                    <div className="arrow"></div>
+                    <div className="reply-content">
+                      <div className="col">
+                        <p>{reply.content}</p>
+                      </div>
+                      <div className="col d-flex justify-content-end">
+                        <EditButton
+                          onClick={() => {
+                            setReplyBeingEdited(reply);
+                            setEditedReplyContent(reply.content);
+                          }}
+                        />
+                        <DeleteButton item={reply} deleteItem={deleteReply} itemType="reply" />
+                      </div>
+                    </div>
                   </div>
                 </>
               )}
