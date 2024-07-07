@@ -80,6 +80,10 @@ header {
   margin-bottom: 5px;
 } */
 
+.save-cancel-buttons {
+  margin: 10px;
+}
+
 .new-post-form {
   max-width: 800px;
   margin: 20px auto;
@@ -110,4 +114,35 @@ header {
 
 .new-post-form button:hover {
   background-color: #e03e00;
+}
+
+.reply-wrapper {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.arrow {
+  width: 20px;
+  height: 20px;
+  background-color: #ccc; /* Adjust the color as needed */
+  clip-path: polygon(100% 50%, 0 0, 0 100%);
+  margin-right: 10px; /* Space between arrow and reply content */
+}
+
+.reply-content {
+  flex: 1;
+  padding: 10px;
+  background-color: #f9f9f9; /* Adjust the background color as needed */
+  border: 1px solid #ddd; /* Border around the reply */
+  border-radius: 5px; /* Rounded corners */
+}
+
+.col {
+  margin-bottom: 10px; /* Space between reply text and buttons */
+}
+
+.d-flex {
+  display: flex;
+  gap: 10px; /* Space between edit and delete buttons */
 }
