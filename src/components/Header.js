@@ -5,7 +5,7 @@ import '../App.css';
 const Header = () => {
   return (
     <header>
-      <h1>Reddit Clone</h1>
+      <h1>Reddit Clone v1.0</h1>
     </header>
   );
 };

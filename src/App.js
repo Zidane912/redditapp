@@ -12,7 +12,7 @@ const App = () => {
   useEffect(() => {
     const readData = async (endpoint, stateFunction) => {
       try {
-        const response = await axios.get(`http://127.0.0.1:5000/${endpoint}`);
+        const response = await axios.get(`http://ec2-52-56-192-208.eu-west-2.compute.amazonaws.com/${endpoint}`);
         if (response.status === 200) {
           stateFunction(response.data);
         }

@@ -10,7 +10,7 @@ const NewPostForm = ({ addPost }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://127.0.0.1:5000/addPost", {
+      const response = await axios.post("http://ec2-52-56-192-208.eu-west-2.compute.amazonaws.com/addPost", {
         title,
         content,
       });
