@@ -6,7 +6,7 @@ import ReplyButton from "./ReplyButton";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../App.css';
 
-const Post = ({ post, replies, addReply, deletePost, editPost, deleteReply, editReply }) => {
+const Post = ({ post, replies, addReply, deletePost, editPost, deleteReply, editReply, user }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [isReplying, setIsReplying] = useState(false);
   const [replyBeingEdited, setReplyBeingEdited] = useState(null);
@@ -35,7 +35,8 @@ const Post = ({ post, replies, addReply, deletePost, editPost, deleteReply, edit
     try {
       const response = await axios.post("http://127.0.0.1:5000/addReply", {
         post_id: post.id,
-        content: replyContent
+        content: replyContent,
+        user_id: user.user_id  // Pass the user_id here
       });
       if (response.status === 201) {
         addReply(response.data);
@@ -86,6 +87,7 @@ const Post = ({ post, replies, addReply, deletePost, editPost, deleteReply, edit
           <div className="row d-flex justify-content-between align-items-center">
             <div className="col">
               <h2 className="post-title">{post.title}</h2>
+              <small>Posted by: {post.username}</small>
             </div>
             <div className="col d-flex justify-content-end">
               <ReplyButton onClick={() => setIsReplying(!isReplying)} />
@@ -134,6 +136,7 @@ const Post = ({ post, replies, addReply, deletePost, editPost, deleteReply, edit
                     <div className="reply-content">
                       <div className="col">
                         <p>{reply.content}</p>
+                        <small>Reply by: {reply.username}</small>
                       </div>
                       <div className="col d-flex justify-content-end">
                         <EditButton

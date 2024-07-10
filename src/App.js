@@ -1,30 +1,56 @@
 import React, { useState, useEffect } from "react";
+import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
 import Header from "./components/Header";
 import PostList from "./components/PostList";
 import NewPostForm from "./components/NewPostForm";
+import SignIn from "./components/SignIn";
+import Register from "./components/Register";
 import axios from "axios";
 import "./App.css";
 
 const App = () => {
   const [posts, setPosts] = useState([]);
   const [replies, setReplies] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [currentUser, setCurrentUser] = useState(null);
+
 
   useEffect(() => {
-    const readData = async (endpoint, stateFunction) => {
-      try {
-        const response = await axios.get(`http://127.0.0.1:5000/${endpoint}`);
-        if (response.status === 200) {
-          stateFunction(response.data);
+    if (isAuthenticated) {
+      const readData = async (endpoint, stateFunction) => {
+        try {
+          const response = await axios.get(`http://127.0.0.1:5000/${endpoint}`);
+          if (response.status === 200) {
+            stateFunction(response.data);
+          }
+        } catch (error) {
+          console.error("Error fetching data:", error);
         }
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
+      };
 
-    readData("readPosts", setPosts);
-    readData("readReplies", setReplies);
+      const getUsers = async () => {
+        try {
+          const response = await axios.get("http://127.0.0.1:5000/getUsers");
+          if (response.status === 200) {
+            setUsers(response.data);
+            console.log(response.data);
+          }
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        }
+      };
 
-  }, []);
+      getUsers();
+      readData("readPosts", setPosts);
+      readData("readReplies", setReplies);
+    }
+  }, [isAuthenticated]);
+
+  const handleSignIn = (status, user) => {
+    setIsAuthenticated(status);
+    setCurrentUser(user);
+  };
 
   const addPost = (post) => {
     setPosts([...posts, post]);
@@ -51,12 +77,23 @@ const App = () => {
   };
 
   return (
-    <div className="App">
-      <Header />
-      <NewPostForm addPost={addPost} />
-      <PostList posts={posts} replies={replies} deletePost={deletePost} editPost={editPost} addReply={addReply} deleteReply={deleteReply} editReply={editReply} />
-    </div>
+    <Router>
+      <div className="App">
+        <Routes>
+          <Route path="/" element={isAuthenticated ? <Navigate to="/reddit" /> : <SignIn onSignIn={handleSignIn} />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/reddit" element={isAuthenticated ? (
+            <>
+              <Header />
+              <NewPostForm addPost={addPost} user={currentUser} />
+              <PostList users={users} posts={posts} replies={replies} deletePost={deletePost} editPost={editPost} addReply={addReply} deleteReply={deleteReply} editReply={editReply} user={currentUser} />
+            </>
+          ) : (
+            <Navigate to="/" />
+          )} />
+        </Routes>
+      </div>
+    </Router>
   );
 };
-
 export default App;

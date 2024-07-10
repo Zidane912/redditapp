@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+from werkzeug.security import generate_password_hash, check_password_hash
 import mysql.connector
 from mysql.connector import Error
 import logging
@@ -21,12 +22,97 @@ def get_db_connection():
     conn = mysql.connector.connect(**config)
     return conn
 
+
+@app.route('/register', methods=['POST'])
+def register():
+    data = request.json
+    username = data.get('username')
+    password = data.get('password')
+    hashed_password = generate_password_hash(password)
+    
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        insert_query = "INSERT INTO users (username, password) VALUES (%s, %s)"
+        cursor.execute(insert_query, (username, hashed_password))
+        conn.commit()
+        
+        return jsonify({"message": "User registered successfully"}), 201
+
+    except mysql.connector.Error as err:
+        return jsonify({'error': str(err)}), 500
+
+    finally:
+        if conn.is_connected():
+            cursor.close()
+            conn.close()
+
+
+@app.route('/signIn', methods=['POST'])
+def signIn():
+    data = request.json
+    username = data.get('username')
+    password = data.get('password')
+    
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        select_query = "SELECT user_id, password FROM users WHERE username = %s"
+        cursor.execute(select_query, (username,))
+        row = cursor.fetchone()
+        
+        if row and check_password_hash(row[1], password):
+            user_id = row[0]
+            return jsonify({"authenticated": True, "user": {"username": username, "user_id": user_id}}), 200
+        else:
+            return jsonify({"authenticated": False, "message": "Invalid credentials"}), 401
+
+    except mysql.connector.Error as err:
+        return jsonify({'error': str(err)}), 500
+
+    finally:
+        if conn.is_connected():
+            cursor.close()
+            conn.close()
+
+
+
+@app.route('/getUsers', methods=['GET'])
+def get_user():
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        read_query = "SELECT user_id, username FROM users"
+        cursor.execute(read_query)
+        rows = cursor.fetchall()
+        
+        users = []
+        for row in rows:
+            users.append({
+                "user_id": row[0],
+                "username": row[1]
+            })
+        
+        return jsonify(users)
+
+    except Error as e:
+        return jsonify({'error': str(e)}), 500
+
+    finally:
+        if conn.is_connected():
+            cursor.close()
+            conn.close()
+
 @app.route('/readPosts', methods=['GET'])
 def get_post():
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
-        read_query = "SELECT id, title, content FROM posts"
+        read_query = """
+        SELECT posts.id, posts.title, posts.content, users.username
+        FROM posts
+        JOIN users ON posts.user_id = users.user_id
+        """
         cursor.execute(read_query)
         rows = cursor.fetchall()
         
@@ -35,7 +121,8 @@ def get_post():
             posts.append({
                 "id": row[0],
                 "title": row[1],
-                "content": row[2]
+                "content": row[2],
+                "username": row[3]
             })
         
         return jsonify(posts)
@@ -53,15 +140,16 @@ def add_post():
     data = request.json
     title = data.get('title')
     content = data.get('content')
+    user_id = data.get('user_id')
 
-    if not title or not content:
-        return jsonify({'error': 'Title and content are required'}), 400
+    if not title or not content or not user_id:
+        return jsonify({'error': 'Title, content, and user ID are required'}), 400
 
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
-        insert_query = "INSERT INTO posts (title, content) VALUES (%s, %s)"
-        cursor.execute(insert_query, (title, content))
+        insert_query = "INSERT INTO posts (title, content, user_id) VALUES (%s, %s, %s)"
+        cursor.execute(insert_query, (title, content, user_id))
         conn.commit()
         new_post_id = cursor.lastrowid  # Get the last inserted ID
 
@@ -69,7 +157,8 @@ def add_post():
         new_post = {
             'id': new_post_id,
             'title': title,
-            'content': content
+            'content': content,
+            'user_id': user_id
         }
 
         return jsonify(new_post), 201
@@ -81,6 +170,7 @@ def add_post():
         if conn.is_connected():
             cursor.close()
             conn.close()
+
 
 
 
@@ -179,7 +269,11 @@ def get_replies():
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
-        read_query = "SELECT id, content, post_id FROM reply"
+        read_query = """
+        SELECT reply.id, reply.content, reply.post_id, users.username
+        FROM reply
+        JOIN users ON reply.user_id = users.user_id
+        """
         cursor.execute(read_query)
         rows = cursor.fetchall()
         
@@ -188,7 +282,8 @@ def get_replies():
             replies.append({
                 "id": row[0],
                 "content": row[1],
-                "post_id": row[2]
+                "post_id": row[2],
+                "username": row[3]
             })
         
         return jsonify(replies)
@@ -203,6 +298,7 @@ def get_replies():
 
 
 
+
 @app.route('/addReply', methods=['POST'])
 def add_reply():
     data = request.json
@@ -210,27 +306,29 @@ def add_reply():
 
     post_id = data.get('post_id')
     reply_content = data.get('content')
+    user_id = data.get('user_id')
 
-    if post_id is None:
-        logging.error("No id provided in request")
-        return jsonify({"error": "No id provided"}), 400
+    if not post_id or not reply_content or not user_id:
+        logging.error("Post ID, content, and user ID are required")
+        return jsonify({"error": "Post ID, content, and user ID are required"}), 400
 
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
-        update_query = "INSERT INTO reply (post_id, content) VALUES (%s, %s)"
-        cursor.execute(update_query, (post_id, reply_content))  # Ensure the id is passed as a tuple
+        update_query = "INSERT INTO reply (post_id, content, user_id) VALUES (%s, %s, %s)"
+        cursor.execute(update_query, (post_id, reply_content, user_id))  # Ensure the id is passed as a tuple
         conn.commit()
         new_reply_id = cursor.lastrowid  # Get the last inserted ID
 
-        # Prepare the new post data to be returned
+        # Prepare the new reply data to be returned
         new_reply = {
             'id': new_reply_id,
             'content': reply_content,
-            'post_id': post_id
+            'post_id': post_id,
+            'user_id': user_id
         }
 
-        return jsonify(new_reply), 201  # Return the new post data with status code 201
+        return jsonify(new_reply), 201  # Return the new reply data with status code 201
 
     except Error as e:
         logging.error(f"Database error: {str(e)}")
@@ -241,6 +339,7 @@ def add_reply():
             cursor.close()
             conn.close()
             logging.debug("Database connection closed")
+
 
 
 @app.route('/deleteReply', methods=['POST'])

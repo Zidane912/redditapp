@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import '../App.css';
 
-const NewPostForm = ({ addPost }) => {
+const NewPostForm = ({ addPost, user }) => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
 
@@ -13,6 +13,7 @@ const NewPostForm = ({ addPost }) => {
       const response = await axios.post("http://127.0.0.1:5000/addPost", {
         title,
         content,
+        user_id: user.user_id
       });
       if (response.status === 201) {
         const newPost = response.data;
@@ -50,3 +51,5 @@ const NewPostForm = ({ addPost }) => {
 };
 
 export default NewPostForm;
+
+
