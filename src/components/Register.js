@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
+import 'bootstrap/dist/css/bootstrap.min.css';
+import "../App.css";
 
 const Register = () => {
   const [username, setUsername] = useState("");
@@ -23,17 +25,25 @@ const Register = () => {
   };
 
   return (
-    <form onSubmit={handleRegister}>
-      <div>
-        <label>Username:</label>
-        <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} />
-      </div>
-      <div>
-        <label>Password:</label>
-        <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
-      </div>
-      <button type="submit">Register</button>
-    </form>
+    <div className="register-container">
+      <form className="register-form" onSubmit={handleRegister}>
+        <div>
+          <label>Username</label>
+          <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} required />
+        </div>
+        <div>
+          <label>Password</label>
+          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+        </div>
+        <button type="submit">Register</button>
+        <div className="back-to-signin">
+          <Link to="/" className="btn back-btn">Back to Sign In</Link>
+        </div>
+        <div>
+        <p className="warning-message justify-content-between align-items-center"><b className="warning">WARNING</b> This is a test project, please do not use any of your real passwords to register</p>
+        </div>
+      </form>
+    </div>
   );
 };
 

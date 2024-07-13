@@ -5,18 +5,18 @@ const PostList = ({ posts, replies, deletePost, editPost, addReply, deleteReply,
   return (
     <div className="post-list">
       {posts.map(post => (
-        <Post
-          users={users}
-          key={post.id}
-          post={post}
-          replies={replies.filter(reply => reply.post_id === post.id)}
-          deletePost={deletePost}
-          editPost={editPost}
-          addReply={addReply}
-          deleteReply={deleteReply}
-          editReply={editReply}
-          user={currentUser}
-        />
+          <Post
+            key={post.id}  // Ensure unique key for each post
+            currentUser={currentUser}
+            // users={users}
+            post={post}
+            replies={replies.filter(reply => reply.post_id === post.id)}
+            deletePost={deletePost}
+            editPost={editPost}
+            addReply={addReply}
+            deleteReply={deleteReply}
+            editReply={editReply}
+          />
       ))}
     </div>
   );

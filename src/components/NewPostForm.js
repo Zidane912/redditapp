@@ -27,6 +27,7 @@ const NewPostForm = ({ addPost, user }) => {
       console.error("Error posting data:", error);
     }
   };
+  
 
   return (
     <form className="new-post-form" onSubmit={handleSubmit}>

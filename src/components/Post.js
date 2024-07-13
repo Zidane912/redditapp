@@ -6,7 +6,7 @@ import ReplyButton from "./ReplyButton";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../App.css';
 
-const Post = ({ post, replies, addReply, deletePost, editPost, deleteReply, editReply, user }) => {
+const Post = ({ post, replies, addReply, deletePost, editPost, deleteReply, editReply, currentUser }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [isReplying, setIsReplying] = useState(false);
   const [replyBeingEdited, setReplyBeingEdited] = useState(null);
@@ -36,7 +36,7 @@ const Post = ({ post, replies, addReply, deletePost, editPost, deleteReply, edit
       const response = await axios.post("http://127.0.0.1:5000/addReply", {
         post_id: post.id,
         content: replyContent,
-        user_id: user.user_id  // Pass the user_id here
+        user_id: currentUser.user_id
       });
       if (response.status === 201) {
         addReply(response.data);
@@ -87,7 +87,7 @@ const Post = ({ post, replies, addReply, deletePost, editPost, deleteReply, edit
           <div className="row d-flex justify-content-between align-items-center">
             <div className="col">
               <h2 className="post-title">{post.title}</h2>
-              <small>Posted by: {post.username}</small>
+              <small>Posted by <b>{post.username}</b></small>
             </div>
             <div className="col d-flex justify-content-end">
               <ReplyButton onClick={() => setIsReplying(!isReplying)} />
@@ -117,7 +117,7 @@ const Post = ({ post, replies, addReply, deletePost, editPost, deleteReply, edit
       {replies && replies.length > 0 && (
         <div className="replies">
           {replies.map((reply) => (
-            <div key={reply.id} className="row reply">
+            <div key={reply.id} className="row reply"> {/* Ensure unique key for each reply */}
               {replyBeingEdited && replyBeingEdited.id === reply.id ? (
                 <div className="col edit-form">
                   <textarea
@@ -130,13 +130,13 @@ const Post = ({ post, replies, addReply, deletePost, editPost, deleteReply, edit
                   </div>
                 </div>
               ) : (
-                <>
+                <div>
                   <div className="reply-wrapper">
                     <div className="arrow"></div>
                     <div className="reply-content">
                       <div className="col">
                         <p>{reply.content}</p>
-                        <small>Reply by: {reply.username}</small>
+                        <small>Reply by <b>{reply.username}</b></small>
                       </div>
                       <div className="col d-flex justify-content-end">
                         <EditButton
@@ -149,12 +149,21 @@ const Post = ({ post, replies, addReply, deletePost, editPost, deleteReply, edit
                       </div>
                     </div>
                   </div>
-                </>
+                </div>
               )}
             </div>
           ))}
         </div>
       )}
+      {/* <div className="users-list">
+        {users && users.length > 0 && (
+          <ul>
+            {users.map(user => (
+              <li key={user.user_id}>{user.username}</li> // Ensure unique key for each user
+            ))}
+          </ul>
+        )}
+      </div> */}
     </div>
   );
 };
