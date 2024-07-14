@@ -86,21 +86,21 @@ const App = () => {
     localStorage.removeItem("sessionData");
   };
 
-  // const addPost = (newPost) => {
-  //   setPosts((prevPosts) => [...prevPosts, newPost]);
+  const addPost = (newPost) => {
+    setPosts((prevPosts) => [...prevPosts, newPost]);
+  };
+
+  const addReply = (newReply) => {
+    setReplies((prevReplies) => [...prevReplies, newReply]);
+  }
+
+  // const addPost = (post) => {
+  //   setPosts([...posts, post]);
   // };
 
-  // const addReply = (newReply) => {
-  //   setReplies((prevReplies) => [...prevReplies, newReply]);
-  // }
-
-  const addPost = (post) => {
-    setPosts([...posts, post]);
-  };
-
-  const addReply = (reply) => {
-    setReplies([...replies, reply]);
-  };
+  // const addReply = (reply) => {
+  //   setReplies([...replies, reply]);
+  // };
 
   const deletePost = (id) => {
     setPosts(posts.filter(post => post.id !== id));

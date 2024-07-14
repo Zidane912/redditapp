@@ -33,12 +33,14 @@ const Post = ({ post, replies, addReply, deletePost, editPost, deleteReply, edit
 
   const handleReplyClick = async () => {
     try {
+      
       const response = await axios.post("http://127.0.0.1:5000/addReply", {
         post_id: post.id,
         content: replyContent,
         user_id: currentUser.user_id
       });
       if (response.status === 201) {
+        // console.log(response);
         addReply(response.data);
         setReplyContent('');
         setIsReplying(false);
@@ -48,8 +50,11 @@ const Post = ({ post, replies, addReply, deletePost, editPost, deleteReply, edit
     }
   };
 
+
   const handleEditReplyClick = async () => {
+
     try {
+      
       const response = await axios.post("http://127.0.0.1:5000/editReply", {
         post_id: replyBeingEdited.post_id,
         reply_id: replyBeingEdited.id,
@@ -79,7 +84,7 @@ const Post = ({ post, replies, addReply, deletePost, editPost, deleteReply, edit
               onChange={(e) => setEditedContent(e.target.value)}
             />
             <div className="save-cancel-buttons d-flex justify-content-end">
-              <button onClick={handlePostClick}>Save</button>
+              <button type="submit" onClick={handlePostClick}>Save</button>
               <button onClick={() => setIsEditing(false)}>Cancel</button>
             </div>
           </div>
@@ -90,7 +95,7 @@ const Post = ({ post, replies, addReply, deletePost, editPost, deleteReply, edit
               <small>Posted by <b>{post.username}</b></small>
             </div>
             <div className="col d-flex justify-content-end">
-              <ReplyButton onClick={() => setIsReplying(!isReplying)} />
+              <ReplyButton onClick={() => setIsReplying(true)} />
               <EditButton onClick={() => setIsEditing(true)} />
               <DeleteButton item={post} deleteItem={deletePost} itemType="post" />
             </div>
@@ -109,8 +114,19 @@ const Post = ({ post, replies, addReply, deletePost, editPost, deleteReply, edit
             onChange={(e) => setReplyContent(e.target.value)}
           />
           <div className="save-cancel-buttons d-flex justify-content-end">
-            <button onClick={handleReplyClick}>Save</button>
-            <button onClick={() => setIsReplying(false)}>Cancel</button>
+            <button
+              onClick={handleReplyClick}
+            >
+              Save
+            </button>
+            <button
+              onClick={() => {
+                setIsReplying(false);
+                setReplyContent('');
+              }}
+            >
+              Cancel
+            </button>
           </div>
         </div>
       )}
@@ -125,7 +141,7 @@ const Post = ({ post, replies, addReply, deletePost, editPost, deleteReply, edit
                     onChange={(e) => setEditedReplyContent(e.target.value)}
                   />
                   <div className="save-cancel-buttons d-flex justify-content-end">
-                    <button className="save-button" onClick={handleEditReplyClick}>Save</button>
+                    <button type="submit" className="save-button" onClick={handleEditReplyClick}>Save</button>
                     <button className="cancel-button" onClick={() => setReplyBeingEdited(null)}>Cancel</button>
                   </div>
                 </div>
@@ -155,15 +171,6 @@ const Post = ({ post, replies, addReply, deletePost, editPost, deleteReply, edit
           ))}
         </div>
       )}
-      {/* <div className="users-list">
-        {users && users.length > 0 && (
-          <ul>
-            {users.map(user => (
-              <li key={user.user_id}>{user.username}</li> // Ensure unique key for each user
-            ))}
-          </ul>
-        )}
-      </div> */}
     </div>
   );
 };
