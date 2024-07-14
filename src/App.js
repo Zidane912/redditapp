@@ -38,6 +38,8 @@ const App = () => {
         if (repliesResponse.status === 200) {
           setReplies(repliesResponse.data);
         }
+
+ 
       } catch (error) {
         console.error("Error fetching data:", error);
         // Handle errors appropriately (e.g., set error state, show error message)

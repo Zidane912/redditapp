@@ -33,7 +33,6 @@ const Post = ({ post, replies, addReply, deletePost, editPost, deleteReply, edit
 
   const handleReplyClick = async () => {
     try {
-      
       const response = await axios.post("http://ec2-52-56-192-208.eu-west-2.compute.amazonaws.com/addReply", {
         post_id: post.id,
         content: replyContent,
@@ -54,7 +53,6 @@ const Post = ({ post, replies, addReply, deletePost, editPost, deleteReply, edit
   const handleEditReplyClick = async () => {
 
     try {
-      
       const response = await axios.post("http://ec2-52-56-192-208.eu-west-2.compute.amazonaws.com/editReply", {
         post_id: replyBeingEdited.post_id,
         reply_id: replyBeingEdited.id,

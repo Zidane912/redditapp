@@ -4,14 +4,19 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import mysql.connector
 from mysql.connector import Error
 import logging
+import os
 
 app = Flask(__name__)
 CORS(app)
 
+
+database_url = os.getenv('DATABASE_URL')
+password = os.getenv('PASSWORD')
+
 config = {
-    'host': 'redditdb.ceqctovrsej2.eu-west-2.rds.amazonaws.com',
+    'host': database_url,
     'user': 'admin',
-    'password': 'Qwerty123!',
+    'password': password,
     'database': 'posts',
     'port': 3306,
     'raise_on_warnings': True
