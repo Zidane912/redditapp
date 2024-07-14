@@ -28,13 +28,13 @@ const App = () => {
         // }
 
         // Fetch posts
-        const postsResponse = await axios.get("http://127.0.0.1:5000/readPosts");
+        const postsResponse = await axios.get("http://ec2-52-56-192-208.eu-west-2.compute.amazonaws.com/readPosts");
         if (postsResponse.status === 200) {
           setPosts(postsResponse.data);
         }
 
         // Fetch replies
-        const repliesResponse = await axios.get("http://127.0.0.1:5000/readReplies");
+        const repliesResponse = await axios.get("http://ec2-52-56-192-208.eu-west-2.compute.amazonaws.com/readReplies");
         if (repliesResponse.status === 200) {
           setReplies(repliesResponse.data);
         }

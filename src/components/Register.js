@@ -12,7 +12,7 @@ const Register = () => {
   const handleRegister = async (event) => {
     event.preventDefault();
     try {
-      const response = await axios.post("http://127.0.0.1:5000/register", { username, password });
+      const response = await axios.post("http://ec2-52-56-192-208.eu-west-2.compute.amazonaws.com/register", { username, password });
       if (response.status === 201) {
         navigate("/");
       } else {

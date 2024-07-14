@@ -34,7 +34,7 @@ const Post = ({ post, replies, addReply, deletePost, editPost, deleteReply, edit
   const handleReplyClick = async () => {
     try {
       
-      const response = await axios.post("http://127.0.0.1:5000/addReply", {
+      const response = await axios.post("http://ec2-52-56-192-208.eu-west-2.compute.amazonaws.com/addReply", {
         post_id: post.id,
         content: replyContent,
         user_id: currentUser.user_id

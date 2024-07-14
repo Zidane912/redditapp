@@ -10,7 +10,7 @@ const SignIn = ({ onSignIn }) => {
   const handleSignIn = async (event) => {
     event.preventDefault();
     try {
-      const response = await axios.post("http://127.0.0.1:5000/signIn", { username, password });
+      const response = await axios.post("http://ec2-52-56-192-208.eu-west-2.compute.amazonaws.com/signIn", { username, password });
       if (response.status === 200 && response.data.authenticated) {
         onSignIn(true, response.data.user);
       } else {
