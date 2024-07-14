@@ -6,7 +6,7 @@ import ReplyButton from "./ReplyButton";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '../App.css';
 
-const Post = ({ post, replies, addReply, deletePost, editPost, deleteReply, editReply }) => {
+const Post = ({ post, replies, addReply, deletePost, editPost, deleteReply, editReply, currentUser }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [isReplying, setIsReplying] = useState(false);
   const [replyBeingEdited, setReplyBeingEdited] = useState(null);
@@ -35,9 +35,11 @@ const Post = ({ post, replies, addReply, deletePost, editPost, deleteReply, edit
     try {
       const response = await axios.post("http://ec2-52-56-192-208.eu-west-2.compute.amazonaws.com/addReply", {
         post_id: post.id,
-        content: replyContent
+        content: replyContent,
+        user_id: currentUser.user_id
       });
       if (response.status === 201) {
+        // console.log(response);
         addReply(response.data);
         setReplyContent('');
         setIsReplying(false);
@@ -47,7 +49,9 @@ const Post = ({ post, replies, addReply, deletePost, editPost, deleteReply, edit
     }
   };
 
+
   const handleEditReplyClick = async () => {
+
     try {
       const response = await axios.post("http://ec2-52-56-192-208.eu-west-2.compute.amazonaws.com/editReply", {
         post_id: replyBeingEdited.post_id,
@@ -78,7 +82,7 @@ const Post = ({ post, replies, addReply, deletePost, editPost, deleteReply, edit
               onChange={(e) => setEditedContent(e.target.value)}
             />
             <div className="save-cancel-buttons d-flex justify-content-end">
-              <button onClick={handlePostClick}>Save</button>
+              <button type="submit" onClick={handlePostClick}>Save</button>
               <button onClick={() => setIsEditing(false)}>Cancel</button>
             </div>
           </div>
@@ -86,9 +90,10 @@ const Post = ({ post, replies, addReply, deletePost, editPost, deleteReply, edit
           <div className="row d-flex justify-content-between align-items-center">
             <div className="col">
               <h2 className="post-title">{post.title}</h2>
+              <small>Posted by <b>{post.username}</b></small>
             </div>
             <div className="col d-flex justify-content-end">
-              <ReplyButton onClick={() => setIsReplying(!isReplying)} />
+              <ReplyButton onClick={() => setIsReplying(true)} />
               <EditButton onClick={() => setIsEditing(true)} />
               <DeleteButton item={post} deleteItem={deletePost} itemType="post" />
             </div>
@@ -107,15 +112,26 @@ const Post = ({ post, replies, addReply, deletePost, editPost, deleteReply, edit
             onChange={(e) => setReplyContent(e.target.value)}
           />
           <div className="save-cancel-buttons d-flex justify-content-end">
-            <button onClick={handleReplyClick}>Save</button>
-            <button onClick={() => setIsReplying(false)}>Cancel</button>
+            <button
+              onClick={handleReplyClick}
+            >
+              Save
+            </button>
+            <button
+              onClick={() => {
+                setIsReplying(false);
+                setReplyContent('');
+              }}
+            >
+              Cancel
+            </button>
           </div>
         </div>
       )}
       {replies && replies.length > 0 && (
         <div className="replies">
           {replies.map((reply) => (
-            <div key={reply.id} className="row reply">
+            <div key={reply.id} className="row reply"> {/* Ensure unique key for each reply */}
               {replyBeingEdited && replyBeingEdited.id === reply.id ? (
                 <div className="col edit-form">
                   <textarea
@@ -123,17 +139,18 @@ const Post = ({ post, replies, addReply, deletePost, editPost, deleteReply, edit
                     onChange={(e) => setEditedReplyContent(e.target.value)}
                   />
                   <div className="save-cancel-buttons d-flex justify-content-end">
-                    <button className="save-button" onClick={handleEditReplyClick}>Save</button>
+                    <button type="submit" className="save-button" onClick={handleEditReplyClick}>Save</button>
                     <button className="cancel-button" onClick={() => setReplyBeingEdited(null)}>Cancel</button>
                   </div>
                 </div>
               ) : (
-                <>
+                <div>
                   <div className="reply-wrapper">
                     <div className="arrow"></div>
                     <div className="reply-content">
                       <div className="col">
                         <p>{reply.content}</p>
+                        <small>Reply by <b>{reply.username}</b></small>
                       </div>
                       <div className="col d-flex justify-content-end">
                         <EditButton
@@ -146,7 +163,7 @@ const Post = ({ post, replies, addReply, deletePost, editPost, deleteReply, edit
                       </div>
                     </div>
                   </div>
-                </>
+                </div>
               )}
             </div>
           ))}

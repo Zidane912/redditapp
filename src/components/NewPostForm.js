@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import '../App.css';
 
-const NewPostForm = ({ addPost }) => {
+const NewPostForm = ({ addPost, user }) => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
 
@@ -13,6 +13,7 @@ const NewPostForm = ({ addPost }) => {
       const response = await axios.post("http://ec2-52-56-192-208.eu-west-2.compute.amazonaws.com/addPost", {
         title,
         content,
+        user_id: user.user_id
       });
       if (response.status === 201) {
         const newPost = response.data;
@@ -26,6 +27,7 @@ const NewPostForm = ({ addPost }) => {
       console.error("Error posting data:", error);
     }
   };
+  
 
   return (
     <form className="new-post-form" onSubmit={handleSubmit}>
@@ -50,3 +52,5 @@ const NewPostForm = ({ addPost }) => {
 };
 
 export default NewPostForm;
+
+
