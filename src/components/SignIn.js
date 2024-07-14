@@ -6,6 +6,7 @@ import "../App.css";
 const SignIn = ({ onSignIn }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   const handleSignIn = async (event) => {
     event.preventDefault();
@@ -14,10 +15,11 @@ const SignIn = ({ onSignIn }) => {
       if (response.status === 200 && response.data.authenticated) {
         onSignIn(true, response.data.user);
       } else {
-        alert("Invalid credentials");
+        setErrorMessage("Invalid credentials. Please try again.");
       }
     } catch (error) {
       console.error("Error signing in:", error);
+      setErrorMessage("Please check you have used the correct login details");
     }
   };
 
@@ -26,13 +28,22 @@ const SignIn = ({ onSignIn }) => {
       <form className="signin-form" onSubmit={handleSignIn}>
         <div>
           <label>Username</label>
-          <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} />
+          <input
+            type="text"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+          />
         </div>
         <div>
           <label>Password</label>
-          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
         </div>
         <button type="submit">Sign In</button>
+        {errorMessage && <p className="error-message">{errorMessage}</p>}
         <p>
           Don't have an account? <Link to="/register">Register</Link>
         </p>
